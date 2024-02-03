@@ -27,6 +27,8 @@ class CreatingHabitForm extends StatefulWidget {
 class _CreatingHabitFormState extends State<CreatingHabitForm> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _progressUnitController = TextEditingController();
+  final _progressGoalController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +46,36 @@ class _CreatingHabitFormState extends State<CreatingHabitForm> {
                 return null;
               },
             ),
+            TextFormField(
+              controller: _progressUnitController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'required';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: _progressGoalController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'required';
+                }
+                var parsedValue = int.tryParse(value);
+                if (parsedValue == null) {
+                  return 'must be a whole number!';
+                }
+                return null;
+              },
+            ),
             ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  notifier.addHabit(_nameController.text);
+                  notifier.addHabit(
+                      _nameController.text,
+                      _progressUnitController.text,
+                      0,
+                      int.parse(_progressGoalController.text));
                   Navigator.pop(context);
                 }
               },

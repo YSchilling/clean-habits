@@ -7,7 +7,10 @@ class SQLHelper {
   static Future<void> createTables(Database database) async {
     database.execute("""CREATE TABLE habit (
           id INTEGER PRIMARY KEY,
-          name TEXT
+          name TEXT,
+          progressUnit TEXT,
+          progressValue INTEGER,
+          progressGoal INTEGER
           )""");
   }
 
@@ -21,10 +24,16 @@ class SQLHelper {
     );
   }
 
-  static Future<int> insertHabit(String name) async {
+  static Future<int> createHabit(String name, String progressUnit,
+      int progressValue, int progressGoal) async {
     final db = await getDB();
 
-    final data = {'name': name};
+    final data = {
+      'name': name,
+      'progressUnit': progressUnit,
+      'progressValue': progressValue,
+      'progressGoal': progressGoal
+    };
     final id =
         db.insert('habit', data, conflictAlgorithm: ConflictAlgorithm.replace);
     return id;
@@ -39,6 +48,9 @@ class SQLHelper {
       return HabitModel(
         id: query[index]['id'],
         name: query[index]['name'],
+        progressUnit: query[index]['progressUnit'],
+        progressValue: query[index]['progressValue'],
+        progressGoal: query[index]['progressGoal'],
       );
     });
   }
@@ -51,6 +63,9 @@ class SQLHelper {
     return HabitModel(
       id: query[0]['id'],
       name: query[0]['name'],
+      progressUnit: query[0]['progressUnit'],
+      progressValue: query[0]['progressValue'],
+      progressGoal: query[0]['progressGoal'],
     );
   }
 

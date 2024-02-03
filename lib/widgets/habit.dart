@@ -25,8 +25,8 @@ class Habit extends StatelessWidget {
             title: Text(habit.name),
           ),
         ),
-        const LinearProgressIndicator(
-          value: 1,
+        LinearProgressIndicator(
+          value: habit.progressValue / habit.progressGoal,
         ),
       ],
     );

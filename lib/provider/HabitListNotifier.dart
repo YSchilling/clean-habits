@@ -9,8 +9,9 @@ class HabitListNotifier extends ChangeNotifier {
     return _habits;
   }
 
-  void addHabit(String name) {
-    SQLHelper.insertHabit(name);
+  void addHabit(
+      String name, String progressUnit, int progressValue, int progressGoal) {
+    SQLHelper.createHabit(name, progressUnit, progressValue, progressGoal);
     _habits = SQLHelper.getHabits();
     notifyListeners();
   }

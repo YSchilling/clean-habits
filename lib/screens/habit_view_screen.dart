@@ -35,6 +35,8 @@ class HabitViewingForm extends StatelessWidget {
         child: ListView(
           children: [
             Text(habit.name),
+            Text("${habit.progressValue} ${habit.progressUnit}"),
+            Text("${habit.progressGoal}"),
           ],
         ),
       ),

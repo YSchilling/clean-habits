@@ -25,10 +25,14 @@ class HabitEditingForm extends StatelessWidget {
   final HabitModel habit;
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _progressUnitController = TextEditingController();
+  final _progressGoalController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     _nameController.text = habit.name;
+    _progressUnitController.text = habit.progressUnit;
+    _progressGoalController.text = habit.progressGoal.toString();
 
     return Consumer<HabitListNotifier>(
       builder: (context, notifier, child) => Form(
@@ -44,11 +48,37 @@ class HabitEditingForm extends StatelessWidget {
                 return null;
               },
             ),
+            TextFormField(
+              controller: _progressUnitController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'required';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: _progressGoalController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'required';
+                }
+                var parsedValue = int.tryParse(value);
+                if (parsedValue == null) {
+                  return 'must be a whole number!';
+                }
+                return null;
+              },
+            ),
             ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  HabitModel updatedHabit =
-                      HabitModel(id: habit.id, name: _nameController.text);
+                  HabitModel updatedHabit = HabitModel(
+                      id: habit.id,
+                      name: _nameController.text,
+                      progressUnit: _progressUnitController.text,
+                      progressValue: 0,
+                      progressGoal: int.parse(_progressGoalController.text));
                   notifier.updateHabit(updatedHabit);
                   Navigator.pop(context);
                 }
