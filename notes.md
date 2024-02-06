@@ -10,12 +10,12 @@
 
 ## Stage 2: Forming Habit APP from TODO APP
 
-- [ ] Update Model to include Goal and Goal Unit
+- [X] Update Model to include Goal and Goal Unit
 - [ ] Modify the view screen, so that the user is able to modify the progress of the habit
 - [ ] Integrate time to goals
 - [ ] Integrate a Calendar Bar
 
 ## Cleanup
 
-- Merge creation and modification screen
-- clean up redundant database code with smart habitmodel implementation
+- [ ] Merge creation and modification screen
+- [ ] clean up redundant database code with smart habitmodel implementation
