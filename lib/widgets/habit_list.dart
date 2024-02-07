@@ -1,5 +1,5 @@
 import 'package:clean_habits/models/habit_model.dart';
-import 'package:clean_habits/provider/HabitListNotifier.dart';
+import 'package:clean_habits/provider/habit_list_notifer.dart';
 import 'package:clean_habits/widgets/habit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

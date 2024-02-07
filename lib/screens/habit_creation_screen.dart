@@ -1,5 +1,4 @@
-import 'package:clean_habits/models/database.dart';
-import 'package:clean_habits/provider/HabitListNotifier.dart';
+import 'package:clean_habits/provider/habit_list_notifer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +11,10 @@ class HabitCreationScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Create Habit"),
       ),
-      body: const CreatingHabitForm(),
+      body: const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: CreatingHabitForm(),
+      ),
     );
   }
 }
@@ -30,6 +32,51 @@ class _CreatingHabitFormState extends State<CreatingHabitForm> {
   final _progressUnitController = TextEditingController();
   final _progressGoalController = TextEditingController();
 
+  String? defaultValidator(value) {
+    if (value == null || value.isEmpty) {
+      return 'required';
+    }
+    return null;
+  }
+
+  String? integerValidator(value) {
+    if (value == null || value.isEmpty) {
+      return 'required';
+    }
+    var parsedValue = int.tryParse(value);
+    if (parsedValue == null) {
+      return 'must be a whole number!';
+    }
+    return null;
+  }
+
+  TextFormField _createTextFormField(
+    TextEditingController controller,
+    String hint,
+    String? Function(String?)? validator,
+  ) {
+    return TextFormField(
+      controller: controller,
+      validator: validator,
+      decoration: InputDecoration(
+        hintText: hint,
+      ),
+    );
+  }
+
+  ElevatedButton _createSubmitButton(HabitListNotifier notifier) {
+    return ElevatedButton(
+      onPressed: () {
+        if (_formKey.currentState!.validate()) {
+          notifier.addHabit(_nameController.text, _progressUnitController.text,
+              0, int.parse(_progressGoalController.text));
+          Navigator.pop(context);
+        }
+      },
+      child: const Text('Create'),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<HabitListNotifier>(
@@ -37,50 +84,12 @@ class _CreatingHabitFormState extends State<CreatingHabitForm> {
         key: _formKey,
         child: ListView(
           children: [
-            TextFormField(
-              controller: _nameController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'required';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _progressUnitController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'required';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _progressGoalController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'required';
-                }
-                var parsedValue = int.tryParse(value);
-                if (parsedValue == null) {
-                  return 'must be a whole number!';
-                }
-                return null;
-              },
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  notifier.addHabit(
-                      _nameController.text,
-                      _progressUnitController.text,
-                      0,
-                      int.parse(_progressGoalController.text));
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text('Create'),
-            )
+            _createTextFormField(_nameController, "Name", defaultValidator),
+            _createTextFormField(
+                _progressUnitController, "Unit", defaultValidator),
+            _createTextFormField(
+                _progressGoalController, "Goal", integerValidator),
+            _createSubmitButton(notifier),
           ],
         ),
       ),

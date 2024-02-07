@@ -1,7 +1,6 @@
 import 'package:clean_habits/models/habit_model.dart';
-import 'package:clean_habits/provider/HabitListNotifier.dart';
+import 'package:clean_habits/provider/habit_list_notifer.dart';
 import 'package:clean_habits/screens/habit_editing_screen.dart';
-import 'package:clean_habits/screens/habit_view_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

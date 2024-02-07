@@ -1,5 +1,5 @@
 import 'package:clean_habits/models/habit_model.dart';
-import 'package:clean_habits/provider/HabitListNotifier.dart';
+import 'package:clean_habits/provider/habit_list_notifer.dart';
 import 'package:clean_habits/widgets/habit_editing_popup_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +27,16 @@ class _HabitViewScreenState extends State<HabitViewScreen> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              IconButton(
+                icon: const Icon(Icons.remove),
+                onPressed: () {
+                  setState(() {
+                    if (widget.habit.progressValue - 1 >= 0) {
+                      widget.habit.progressValue -= 1;
+                    }
+                  });
+                },
+              ),
               IconButton(
                 icon: const Icon(Icons.add),
                 onPressed: () {

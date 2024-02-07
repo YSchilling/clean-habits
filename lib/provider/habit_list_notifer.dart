@@ -1,9 +1,10 @@
-import 'package:clean_habits/models/database.dart';
+import 'package:clean_habits/models/sql_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:clean_habits/models/habit_model.dart';
 
 class HabitListNotifier extends ChangeNotifier {
   Future<List<HabitModel>> _habits = SQLHelper.getHabits();
+  HabitModel? currentHabit;
 
   Future<List<HabitModel>> getHabits() {
     return _habits;
