@@ -1,16 +1,32 @@
-# clean_habits
+# Clean Habits
 
-A new Flutter project.
+I recently looked for a good open source habit manager, but nothing satisfied me. So here we go :)
 
-## Getting Started
+{{**Video or Image**: It's always beneficial to showcase. Give them the result now instead of having them go to a website and then look for it.}}
 
-This project is a starting point for a Flutter application.
+## Contents
+- [Features](#Features)
+- [Tech Stack](#TechStack)
+- [Process](#Process)
+- [Learnings](#Learnings)
+- [Improvement](#Improvement)
+- [Running the Project](#RunningtheProject)
 
-A few resources to get you started if this is your first Flutter project:
+## Features
+{{Describe what your project can do, like what the user can do. Include all features, every little detail matters.}}
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+<h2 name="TechStack">Tech Stack</h2>
+<img align="left" width="30px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" />
+<img align="left" width="30px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlite/sqlite-original-wordmark.svg" />
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Process
+{{Describe how you started, what the experience was like, whether you struggled with anything, and include conlusions and other relevant details.}}
+
+## Learnings
+{{It's always good to note what you've learned, as that shows the project was a valuable endeavor. Building = learning.}}
+
+## Improvement
+{{Nothing is perfect. Write down what could have been improved.}}
+
+<h2 name="RunningtheProject">Running the Project</h2>
+{{If someone clones it, explain how they can run the project, which command lines need to be run, etc.}}
