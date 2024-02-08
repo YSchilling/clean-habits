@@ -16,8 +16,8 @@ I recently looked for a good open source habit manager, but nothing satisfied me
 {{Describe what your project can do, like what the user can do. Include all features, every little detail matters.}}
 
 <h2 name="TechStack">Tech Stack</h2>
-<img align="left" width="64px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" />
-<img align="left" width="64px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlite/sqlite-original.svg" />
+<img align="left" width="48px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" />
+<img align="left" width="48px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlite/sqlite-original.svg" />
 
 ## Process
 {{Describe how you started, what the experience was like, whether you struggled with anything, and include conlusions and other relevant details.}}
