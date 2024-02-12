@@ -1,4 +1,4 @@
-import 'package:clean_habits/provider/habit_list_notifer.dart';
+import 'package:clean_habits/controllers/habit_list_notifer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -68,8 +68,10 @@ class _CreatingHabitFormState extends State<CreatingHabitForm> {
     return ElevatedButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
-          notifier.addHabit(_nameController.text, _progressUnitController.text,
-              0, int.parse(_progressGoalController.text));
+          notifier.createHabit(
+              _nameController.text,
+              _progressUnitController.text,
+              int.parse(_progressGoalController.text));
           Navigator.pop(context);
         }
       },

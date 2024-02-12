@@ -24,14 +24,14 @@ class SQLHelper {
     );
   }
 
-  static Future<int> createHabit(String name, String progressUnit,
-      int progressValue, int progressGoal) async {
+  static Future<int> createHabit(
+      String name, String progressUnit, int progressGoal) async {
     final db = await getDB();
 
     final data = {
       'name': name,
       'progressUnit': progressUnit,
-      'progressValue': progressValue,
+      'progressValue': 0,
       'progressGoal': progressGoal
     };
     final id =

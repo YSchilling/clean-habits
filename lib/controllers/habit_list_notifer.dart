@@ -6,25 +6,47 @@ class HabitListNotifier extends ChangeNotifier {
   Future<List<HabitModel>> _habits = SQLHelper.getHabits();
   HabitModel? currentHabit;
 
+  // createHabit
+  // getHabits
+  // selectHabit
+  // updateHabit
+  // deleteHabit
+
   Future<List<HabitModel>> getHabits() {
     return _habits;
   }
 
-  void addHabit(
-      String name, String progressUnit, int progressValue, int progressGoal) {
-    SQLHelper.createHabit(name, progressUnit, progressValue, progressGoal);
-    _habits = SQLHelper.getHabits();
+  HabitModel? getCurrentHabit() {
+    return currentHabit;
+  }
+
+  void setCurrentHabit(HabitModel habit) {
+    currentHabit = habit;
     notifyListeners();
+  }
+
+  void updateCurrentHabit(HabitModel habit) {
+    currentHabit = habit;
+    updateHabit(habit);
+    _reloadHabitList();
+  }
+
+  void createHabit(String name, String progressUnit, int progressGoal) {
+    SQLHelper.createHabit(name, progressUnit, progressGoal);
+    _reloadHabitList();
   }
 
   void updateHabit(HabitModel habit) {
     SQLHelper.updateHabit(habit);
-    _habits = SQLHelper.getHabits();
-    notifyListeners();
+    _reloadHabitList();
   }
 
   void deleteHabit(int id) {
     SQLHelper.deleteHabit(id);
+    _reloadHabitList();
+  }
+
+  void _reloadHabitList() {
     _habits = SQLHelper.getHabits();
     notifyListeners();
   }

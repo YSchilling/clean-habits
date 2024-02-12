@@ -1,6 +1,6 @@
-import 'package:clean_habits/screens/habit_creation_screen.dart';
+import 'package:clean_habits/views/screens/habit_creation_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:clean_habits/widgets/habit_list.dart';
+import 'package:clean_habits/views/widgets/habit_list.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

@@ -1,6 +1,6 @@
 import 'package:clean_habits/models/habit_model.dart';
-import 'package:clean_habits/provider/habit_list_notifer.dart';
-import 'package:clean_habits/widgets/habit.dart';
+import 'package:clean_habits/controllers/habit_list_notifer.dart';
+import 'package:clean_habits/views/widgets/habit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +12,16 @@ class HabitList extends StatefulWidget {
 }
 
 class _HabitListState extends State<HabitList> {
+  Widget _createListView(List<HabitModel> habits) {
+    return ListView.separated(
+      itemCount: habits.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 20),
+      itemBuilder: (context, index) {
+        return Habit(habit: habits[index]);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -31,14 +41,7 @@ class _HabitListState extends State<HabitList> {
                   setState(() {});
                   return Future(() {});
                 },
-                child: ListView.separated(
-                  itemCount: habits.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 20),
-                  itemBuilder: (context, index) {
-                    return Habit(habit: habits[index]);
-                  },
-                ),
+                child: _createListView(habits),
               );
             },
           );

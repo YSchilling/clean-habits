@@ -4,8 +4,8 @@ class HabitModel {
   int id;
   String name;
   String progressUnit;
-  int progressValue;
   int progressGoal;
+  int progressValue;
 
   HabitModel(
       {required this.id,
