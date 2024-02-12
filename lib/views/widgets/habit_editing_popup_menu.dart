@@ -5,15 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class HabitEditingPopupMenu extends StatefulWidget {
-  const HabitEditingPopupMenu({super.key, required this.habit});
-
-  final HabitModel habit;
+  const HabitEditingPopupMenu({super.key});
 
   @override
   State<HabitEditingPopupMenu> createState() => _HabitEditingPopupMenuState();
 }
 
 class _HabitEditingPopupMenuState extends State<HabitEditingPopupMenu> {
+  void _editHabit(HabitListNotifier notifier, BuildContext context) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const HabitEditingScreen()));
+  }
+
+  void _deleteHabit(HabitListNotifier notifier, BuildContext context) {
+    HabitModel habit = notifier.getCurrentHabit()!;
+    notifier.deleteHabit(habit.id);
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<HabitListNotifier>(
@@ -21,19 +30,11 @@ class _HabitEditingPopupMenuState extends State<HabitEditingPopupMenu> {
         itemBuilder: (context) => [
           PopupMenuItem(
             child: const Text('edit'),
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HabitEditingScreen(habit: widget.habit),
-              ),
-            ),
+            onTap: () => _editHabit(notifier, context),
           ),
           PopupMenuItem(
             child: const Text('delete'),
-            onTap: () {
-              notifier.deleteHabit(widget.habit.id);
-              Navigator.pop(context);
-            },
+            onTap: () => _deleteHabit(notifier, context),
           )
         ],
       ),

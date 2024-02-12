@@ -9,12 +9,17 @@ class Habit extends StatelessWidget {
 
   final HabitModel habit;
 
+  void _openHabit(
+      BuildContext context, HabitListNotifier notifier, HabitModel habit) {
+    notifier.setCurrentHabit(habit);
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const HabitViewScreen()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<HabitListNotifier>(
       builder: (context, notifier, child) {
-        notifier.setCurrentHabit(habit);
-
         return Column(
           children: [
             Container(
@@ -22,14 +27,7 @@ class Habit extends StatelessWidget {
                 color: Color.fromARGB(100, 222, 222, 222),
               ),
               child: ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const HabitViewScreen(),
-                    ),
-                  );
-                },
+                onTap: () => _openHabit(context, notifier, habit),
                 title: Text(habit.name),
               ),
             ),

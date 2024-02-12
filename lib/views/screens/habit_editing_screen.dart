@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class HabitEditingScreen extends StatelessWidget {
-  const HabitEditingScreen({super.key, required this.habit});
-
-  final HabitModel habit;
+  const HabitEditingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,80 +12,94 @@ class HabitEditingScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Update Habit"),
       ),
-      body: HabitEditingForm(habit: habit),
+      body: HabitEditingForm(),
     );
   }
 }
 
 class HabitEditingForm extends StatelessWidget {
-  HabitEditingForm({super.key, required this.habit});
+  HabitEditingForm({super.key});
 
-  final HabitModel habit;
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _progressUnitController = TextEditingController();
   final _progressGoalController = TextEditingController();
 
-  @override
-  Widget build(BuildContext context) {
+  void _initController(HabitModel habit) {
     _nameController.text = habit.name;
     _progressUnitController.text = habit.progressUnit;
     _progressGoalController.text = habit.progressGoal.toString();
+  }
 
-    return Consumer<HabitListNotifier>(
-      builder: (context, notifier, child) => Form(
-        key: _formKey,
-        child: ListView(
-          children: [
-            TextFormField(
-              controller: _nameController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'required';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _progressUnitController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'required';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _progressGoalController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'required';
-                }
-                var parsedValue = int.tryParse(value);
-                if (parsedValue == null) {
-                  return 'must be a whole number!';
-                }
-                return null;
-              },
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  HabitModel updatedHabit = HabitModel(
-                      id: habit.id,
-                      name: _nameController.text,
-                      progressUnit: _progressUnitController.text,
-                      progressValue: 0,
-                      progressGoal: int.parse(_progressGoalController.text));
-                  notifier.updateHabit(updatedHabit);
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text('Update'),
-            )
-          ],
-        ),
+  ElevatedButton _createSubmitButton(
+      HabitListNotifier notifier, BuildContext context) {
+    return ElevatedButton(
+        child: const Text("Submit"),
+        onPressed: () {
+          if (_formKey.currentState!.validate()) {
+            HabitModel updatedHabit = HabitModel(
+                id: notifier.getCurrentHabit()!.id,
+                name: _nameController.text,
+                progressUnit: _progressUnitController.text,
+                progressValue: 0,
+                progressGoal: int.parse(_progressGoalController.text));
+            notifier.updateCurrentHabit(updatedHabit);
+            Navigator.pop(context);
+          }
+        });
+  }
+
+  TextFormField _createTextFormField(
+    TextEditingController controller,
+    String hint,
+    String? Function(String?)? validator,
+  ) {
+    return TextFormField(
+      controller: controller,
+      validator: validator,
+      decoration: InputDecoration(
+        hintText: hint,
       ),
+    );
+  }
+
+  String? defaultValidator(value) {
+    if (value == null || value.isEmpty) {
+      return 'required';
+    }
+    return null;
+  }
+
+  String? integerValidator(value) {
+    if (value == null || value.isEmpty) {
+      return 'required';
+    }
+    var parsedValue = int.tryParse(value);
+    if (parsedValue == null) {
+      return 'must be a whole number!';
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<HabitListNotifier>(
+      builder: (context, notifier, child) {
+        _initController(notifier.getCurrentHabit()!);
+        return Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              _createTextFormField(_nameController, "Name", defaultValidator),
+              _createTextFormField(
+                  _progressUnitController, "Unit", defaultValidator),
+              _createTextFormField(
+                  _progressGoalController, "Goal", integerValidator),
+              _createSubmitButton(notifier, context),
+            ],
+          ),
+        );
+      },
     );
   }
 }

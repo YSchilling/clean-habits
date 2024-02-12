@@ -6,12 +6,6 @@ class HabitListNotifier extends ChangeNotifier {
   Future<List<HabitModel>> _habits = SQLHelper.getHabits();
   HabitModel? currentHabit;
 
-  // createHabit
-  // getHabits
-  // selectHabit
-  // updateHabit
-  // deleteHabit
-
   Future<List<HabitModel>> getHabits() {
     return _habits;
   }

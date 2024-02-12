@@ -34,7 +34,7 @@ Future<void> showProgressAdderDialogue(BuildContext context) {
                   if (formKey.currentState!.validate()) {
                     HabitModel habit = notifier.getCurrentHabit()!;
                     habit.progressValue += int.parse(progressController.text);
-                    notifier.setCurrentHabit(habit);
+                    notifier.updateCurrentHabit(habit);
                   }
                   Navigator.pop(context);
                 },

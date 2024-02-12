@@ -13,7 +13,13 @@ class HabitViewScreen extends StatefulWidget {
 }
 
 class _HabitViewScreenState extends State<HabitViewScreen> {
-  BottomAppBar _createBottomAppBar(HabitModel habit) {
+  void _resetProgress(HabitListNotifier notifier) {
+    HabitModel habit = notifier.getCurrentHabit()!;
+    habit.progressValue = 0;
+    notifier.updateCurrentHabit(habit);
+  }
+
+  BottomAppBar _createBottomAppBar(HabitListNotifier notifier) {
     return BottomAppBar(
       child: Center(
         child: Row(
@@ -21,11 +27,7 @@ class _HabitViewScreenState extends State<HabitViewScreen> {
           children: [
             IconButton(
               icon: const Icon(Icons.replay),
-              onPressed: () {
-                setState(() {
-                  habit.progressValue = 0;
-                });
-              },
+              onPressed: () => _resetProgress(notifier),
             ),
             IconButton(
               icon: const Icon(Icons.add),
@@ -46,10 +48,10 @@ class _HabitViewScreenState extends State<HabitViewScreen> {
       return Scaffold(
         appBar: AppBar(
           title: Text(habit.name),
-          actions: [HabitEditingPopupMenu(habit: habit)],
+          actions: const [HabitEditingPopupMenu()],
         ),
         body: HabitViewingForm(habit: habit),
-        bottomNavigationBar: _createBottomAppBar(habit),
+        bottomNavigationBar: _createBottomAppBar(notifier),
       );
     });
   }
