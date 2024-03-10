@@ -1,3 +1,4 @@
+import 'package:clean_habits/controllers/habit_list_controller.dart';
 import 'package:clean_habits/models/habit.dart';
 import 'package:clean_habits/controllers/habit_list_notifer.dart';
 import 'package:clean_habits/views/screens/habit_editing_screen.dart';
@@ -18,8 +19,8 @@ class _HabitEditingPopupMenuState extends State<HabitEditingPopupMenu> {
   }
 
   void _deleteHabit(HabitListNotifier notifier, BuildContext context) {
-    Habit habit = notifier.getCurrentHabit()!;
-    notifier.deleteHabit(habit.id);
+    Habit habit = notifier.getSelectedHabit()!;
+    HabitListController.deleteHabit(habit.id);
     Navigator.pop(context);
   }
 

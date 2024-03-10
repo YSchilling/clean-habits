@@ -11,7 +11,7 @@ class HabitListItem extends StatelessWidget {
 
   void _openHabit(
       BuildContext context, HabitListNotifier notifier, Habit habit) {
-    notifier.setCurrentHabit(habit);
+    notifier.selectHabit(habit);
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => const HabitViewScreen()));
   }

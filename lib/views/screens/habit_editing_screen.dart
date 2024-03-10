@@ -37,13 +37,13 @@ class HabitEditingForm extends StatelessWidget {
         child: const Text("Submit"),
         onPressed: () {
           if (_formKey.currentState!.validate()) {
-            Habit updatedHabit = notifier.getCurrentHabit()!;
+            Habit updatedHabit = notifier.getSelectedHabit()!;
             updatedHabit.name = _nameController.text;
             updatedHabit.progressUnit = _progressUnitController.text;
             updatedHabit.progressValue = 0;
             updatedHabit.progressGoal = int.parse(_progressGoalController.text);
 
-            notifier.updateCurrentHabit(updatedHabit);
+            notifier.updateSelectedHabit(updatedHabit);
             Navigator.pop(context);
           }
         });
@@ -85,7 +85,7 @@ class HabitEditingForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HabitListNotifier>(
       builder: (context, notifier, child) {
-        _initController(notifier.getCurrentHabit()!);
+        _initController(notifier.getSelectedHabit()!);
         return Form(
           key: _formKey,
           child: ListView(

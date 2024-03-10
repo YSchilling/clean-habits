@@ -14,9 +14,9 @@ class HabitViewScreen extends StatefulWidget {
 
 class _HabitViewScreenState extends State<HabitViewScreen> {
   void _resetProgress(HabitListNotifier notifier) {
-    Habit habit = notifier.getCurrentHabit()!;
+    Habit habit = notifier.getSelectedHabit()!;
     habit.progressValue = 0;
-    notifier.updateCurrentHabit(habit);
+    notifier.updateSelectedHabit(habit);
   }
 
   BottomAppBar _createBottomAppBar(HabitListNotifier notifier) {
@@ -44,7 +44,7 @@ class _HabitViewScreenState extends State<HabitViewScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<HabitListNotifier>(builder: (context, notifier, child) {
-      Habit habit = notifier.currentHabit!;
+      Habit habit = notifier.selectedHabit!;
       return Scaffold(
         appBar: AppBar(
           title: Text(habit.name),

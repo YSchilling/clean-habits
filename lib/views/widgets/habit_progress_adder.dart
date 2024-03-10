@@ -32,9 +32,9 @@ Future<void> showProgressAdderDialogue(BuildContext context) {
               ElevatedButton(
                 onPressed: () {
                   if (formKey.currentState!.validate()) {
-                    Habit habit = notifier.getCurrentHabit()!;
+                    Habit habit = notifier.getSelectedHabit()!;
                     habit.progressValue += int.parse(progressController.text);
-                    notifier.updateCurrentHabit(habit);
+                    notifier.updateSelectedHabit(habit);
                   }
                   Navigator.pop(context);
                 },

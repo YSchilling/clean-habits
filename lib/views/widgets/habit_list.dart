@@ -1,52 +1,28 @@
+import 'package:clean_habits/models/database.dart';
 import 'package:clean_habits/models/habit.dart';
-import 'package:clean_habits/controllers/habit_list_notifer.dart';
 import 'package:clean_habits/views/widgets/habit.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-class HabitList extends StatefulWidget {
+class HabitList extends StatelessWidget {
   const HabitList({super.key});
 
   @override
-  State<HabitList> createState() => _HabitListState();
-}
-
-class _HabitListState extends State<HabitList> {
-  Widget _createListView(List<Habit> habits) {
-    return ListView.separated(
-      itemCount: habits.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 20),
-      itemBuilder: (context, index) {
-        return HabitListItem(habit: habits[index]);
-      },
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: Consumer<HabitListNotifier>(
-        builder: (context, notifier, child) {
-          return FutureBuilder(
-            future: notifier.getHabits(),
-            builder: (context, snapshot) {
-              debugPrint(snapshot.data.toString());
-              if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              final List<Habit> habits = snapshot.data!;
-              return RefreshIndicator(
-                onRefresh: () {
-                  setState(() {});
-                  return Future(() {});
-                },
-                child: _createListView(habits),
-              );
-            },
-          );
-        },
-      ),
+    return StreamBuilder(
+      stream: IsarService().listenToHabits(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        List<Habit> habits = snapshot.data!;
+        return ListView.builder(
+          itemCount: habits.length,
+          itemBuilder: (context, index) => Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: HabitListItem(habit: habits[index]),
+          ),
+        );
+      },
     );
   }
 }
