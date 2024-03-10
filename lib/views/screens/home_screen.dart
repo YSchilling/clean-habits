@@ -1,4 +1,5 @@
 import 'package:clean_habits/views/screens/habit_creation_screen.dart';
+import 'package:clean_habits/views/widgets/week_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:clean_habits/views/widgets/habit_list.dart';
 
@@ -8,7 +9,17 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const HabitList(),
+      body: const SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 16, bottom: 16),
+              child: WeekProgressBar(),
+            ),
+            Expanded(child: HabitList()),
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () => Navigator.push(
