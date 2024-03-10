@@ -5,21 +5,17 @@ import 'package:clean_habits/views/widgets/habit_progress_adder.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class HabitViewScreen extends StatefulWidget {
+class HabitViewScreen extends StatelessWidget {
   const HabitViewScreen({super.key});
 
-  @override
-  State<HabitViewScreen> createState() => _HabitViewScreenState();
-}
-
-class _HabitViewScreenState extends State<HabitViewScreen> {
   void _resetProgress(HabitListNotifier notifier) {
     Habit habit = notifier.getSelectedHabit()!;
     habit.progressValue = 0;
     notifier.updateSelectedHabit(habit);
   }
 
-  BottomAppBar _createBottomAppBar(HabitListNotifier notifier) {
+  BottomAppBar _createBottomAppBar(
+      BuildContext context, HabitListNotifier notifier) {
     return BottomAppBar(
       child: Center(
         child: Row(
@@ -51,7 +47,7 @@ class _HabitViewScreenState extends State<HabitViewScreen> {
           actions: const [HabitEditingPopupMenu()],
         ),
         body: HabitViewingForm(habit: habit),
-        bottomNavigationBar: _createBottomAppBar(notifier),
+        bottomNavigationBar: _createBottomAppBar(context, notifier),
       );
     });
   }

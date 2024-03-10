@@ -1,7 +1,5 @@
 import 'package:clean_habits/controllers/habit_list_controller.dart';
-import 'package:clean_habits/controllers/habit_list_notifer.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class HabitCreationScreen extends StatelessWidget {
   const HabitCreationScreen({super.key});
@@ -65,7 +63,7 @@ class _CreatingHabitFormState extends State<CreatingHabitForm> {
     );
   }
 
-  ElevatedButton _createSubmitButton(HabitListNotifier notifier) {
+  ElevatedButton _createSubmitButton() {
     return ElevatedButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
@@ -82,19 +80,17 @@ class _CreatingHabitFormState extends State<CreatingHabitForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HabitListNotifier>(
-      builder: (context, notifier, child) => Form(
-        key: _formKey,
-        child: ListView(
-          children: [
-            _createTextFormField(_nameController, "Name", defaultValidator),
-            _createTextFormField(
-                _progressUnitController, "Unit", defaultValidator),
-            _createTextFormField(
-                _progressGoalController, "Goal", integerValidator),
-            _createSubmitButton(notifier),
-          ],
-        ),
+    return Form(
+      key: _formKey,
+      child: ListView(
+        children: [
+          _createTextFormField(_nameController, "Name", defaultValidator),
+          _createTextFormField(
+              _progressUnitController, "Unit", defaultValidator),
+          _createTextFormField(
+              _progressGoalController, "Goal", integerValidator),
+          _createSubmitButton(),
+        ],
       ),
     );
   }
