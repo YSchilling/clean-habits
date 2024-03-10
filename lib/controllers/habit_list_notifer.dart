@@ -1,47 +1,51 @@
-import 'package:clean_habits/models/sql_helper.dart';
+import 'package:clean_habits/models/database.dart';
 import 'package:flutter/material.dart';
-import 'package:clean_habits/models/habit_model.dart';
+import 'package:clean_habits/models/habit.dart';
 
 class HabitListNotifier extends ChangeNotifier {
-  Future<List<HabitModel>> _habits = SQLHelper.getHabits();
-  HabitModel? currentHabit;
+  Future<List<Habit>> _habits = IsarService().getAllHabits();
+  Habit? currentHabit;
 
-  Future<List<HabitModel>> getHabits() {
+  Future<List<Habit>> getHabits() {
     return _habits;
   }
 
-  HabitModel? getCurrentHabit() {
+  Habit? getCurrentHabit() {
     return currentHabit;
   }
 
-  void setCurrentHabit(HabitModel habit) {
+  void setCurrentHabit(Habit habit) {
     currentHabit = habit;
     notifyListeners();
   }
 
-  void updateCurrentHabit(HabitModel habit) {
+  void updateCurrentHabit(Habit habit) {
     currentHabit = habit;
     updateHabit(habit);
     _reloadHabitList();
   }
 
   void createHabit(String name, String progressUnit, int progressGoal) {
-    SQLHelper.createHabit(name, progressUnit, progressGoal);
+    IsarService().saveHabit(Habit(
+        name: name,
+        progressUnit: progressUnit,
+        progressGoal: progressGoal,
+        progressValue: 0));
     _reloadHabitList();
   }
 
-  void updateHabit(HabitModel habit) {
-    SQLHelper.updateHabit(habit);
+  void updateHabit(Habit habit) {
+    IsarService().saveHabit(habit);
     _reloadHabitList();
   }
 
   void deleteHabit(int id) {
-    SQLHelper.deleteHabit(id);
+    IsarService().deleteHabit(id);
     _reloadHabitList();
   }
 
   void _reloadHabitList() {
-    _habits = SQLHelper.getHabits();
+    _habits = IsarService().getAllHabits();
     notifyListeners();
   }
 }

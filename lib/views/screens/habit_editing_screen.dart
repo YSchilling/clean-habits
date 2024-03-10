@@ -1,4 +1,4 @@
-import 'package:clean_habits/models/habit_model.dart';
+import 'package:clean_habits/models/habit.dart';
 import 'package:clean_habits/controllers/habit_list_notifer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +25,7 @@ class HabitEditingForm extends StatelessWidget {
   final _progressUnitController = TextEditingController();
   final _progressGoalController = TextEditingController();
 
-  void _initController(HabitModel habit) {
+  void _initController(Habit habit) {
     _nameController.text = habit.name;
     _progressUnitController.text = habit.progressUnit;
     _progressGoalController.text = habit.progressGoal.toString();
@@ -37,12 +37,12 @@ class HabitEditingForm extends StatelessWidget {
         child: const Text("Submit"),
         onPressed: () {
           if (_formKey.currentState!.validate()) {
-            HabitModel updatedHabit = HabitModel(
-                id: notifier.getCurrentHabit()!.id,
-                name: _nameController.text,
-                progressUnit: _progressUnitController.text,
-                progressValue: 0,
-                progressGoal: int.parse(_progressGoalController.text));
+            Habit updatedHabit = notifier.getCurrentHabit()!;
+            updatedHabit.name = _nameController.text;
+            updatedHabit.progressUnit = _progressUnitController.text;
+            updatedHabit.progressValue = 0;
+            updatedHabit.progressGoal = int.parse(_progressGoalController.text);
+
             notifier.updateCurrentHabit(updatedHabit);
             Navigator.pop(context);
           }

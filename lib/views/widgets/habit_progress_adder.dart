@@ -1,4 +1,4 @@
-import 'package:clean_habits/models/habit_model.dart';
+import 'package:clean_habits/models/habit.dart';
 import 'package:clean_habits/controllers/habit_list_notifer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +32,7 @@ Future<void> showProgressAdderDialogue(BuildContext context) {
               ElevatedButton(
                 onPressed: () {
                   if (formKey.currentState!.validate()) {
-                    HabitModel habit = notifier.getCurrentHabit()!;
+                    Habit habit = notifier.getCurrentHabit()!;
                     habit.progressValue += int.parse(progressController.text);
                     notifier.updateCurrentHabit(habit);
                   }

@@ -1,4 +1,4 @@
-import 'package:clean_habits/models/habit_model.dart';
+import 'package:clean_habits/models/habit.dart';
 import 'package:clean_habits/controllers/habit_list_notifer.dart';
 import 'package:clean_habits/views/widgets/habit.dart';
 import 'package:flutter/material.dart';
@@ -12,12 +12,12 @@ class HabitList extends StatefulWidget {
 }
 
 class _HabitListState extends State<HabitList> {
-  Widget _createListView(List<HabitModel> habits) {
+  Widget _createListView(List<Habit> habits) {
     return ListView.separated(
       itemCount: habits.length,
       separatorBuilder: (context, index) => const SizedBox(height: 20),
       itemBuilder: (context, index) {
-        return Habit(habit: habits[index]);
+        return HabitListItem(habit: habits[index]);
       },
     );
   }
@@ -35,7 +35,7 @@ class _HabitListState extends State<HabitList> {
               if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
               }
-              final List<HabitModel> habits = snapshot.data!;
+              final List<Habit> habits = snapshot.data!;
               return RefreshIndicator(
                 onRefresh: () {
                   setState(() {});

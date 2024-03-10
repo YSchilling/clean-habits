@@ -1,4 +1,4 @@
-import 'package:clean_habits/models/habit_model.dart';
+import 'package:clean_habits/models/habit.dart';
 import 'package:clean_habits/controllers/habit_list_notifer.dart';
 import 'package:clean_habits/views/widgets/habit_editing_popup_menu.dart';
 import 'package:clean_habits/views/widgets/habit_progress_adder.dart';
@@ -14,7 +14,7 @@ class HabitViewScreen extends StatefulWidget {
 
 class _HabitViewScreenState extends State<HabitViewScreen> {
   void _resetProgress(HabitListNotifier notifier) {
-    HabitModel habit = notifier.getCurrentHabit()!;
+    Habit habit = notifier.getCurrentHabit()!;
     habit.progressValue = 0;
     notifier.updateCurrentHabit(habit);
   }
@@ -44,7 +44,7 @@ class _HabitViewScreenState extends State<HabitViewScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<HabitListNotifier>(builder: (context, notifier, child) {
-      HabitModel habit = notifier.currentHabit!;
+      Habit habit = notifier.currentHabit!;
       return Scaffold(
         appBar: AppBar(
           title: Text(habit.name),
@@ -60,7 +60,7 @@ class _HabitViewScreenState extends State<HabitViewScreen> {
 class HabitViewingForm extends StatelessWidget {
   const HabitViewingForm({super.key, required this.habit});
 
-  final HabitModel habit;
+  final Habit habit;
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
-import 'package:clean_habits/models/habit_model.dart';
+/*
+import 'package:clean_habits/models/habit.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -94,3 +95,4 @@ class SQLHelper {
     }
   }
 }
+*/

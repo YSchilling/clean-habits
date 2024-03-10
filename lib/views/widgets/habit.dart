@@ -1,16 +1,16 @@
-import 'package:clean_habits/models/habit_model.dart';
+import 'package:clean_habits/models/habit.dart';
 import 'package:clean_habits/controllers/habit_list_notifer.dart';
 import 'package:clean_habits/views/screens/habit_view_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class Habit extends StatelessWidget {
-  const Habit({super.key, required this.habit});
+class HabitListItem extends StatelessWidget {
+  const HabitListItem({super.key, required this.habit});
 
-  final HabitModel habit;
+  final Habit habit;
 
   void _openHabit(
-      BuildContext context, HabitListNotifier notifier, HabitModel habit) {
+      BuildContext context, HabitListNotifier notifier, Habit habit) {
     notifier.setCurrentHabit(habit);
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => const HabitViewScreen()));
