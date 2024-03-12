@@ -4,6 +4,7 @@ import 'package:clean_habits/models/habit.dart';
 
 class HabitListNotifier extends ChangeNotifier {
   Habit? selectedHabit;
+  DateTime selectedDate = DateTime.now();
 
   void selectHabit(Habit habit) {
     selectedHabit = habit;
@@ -22,6 +23,15 @@ class HabitListNotifier extends ChangeNotifier {
 
   void unselectHabit() {
     selectedHabit = null;
+    notifyListeners();
+  }
+
+  String getSelectedDateString() {
+    return "${selectedDate.day}.${selectedDate.month}.${selectedDate.year}";
+  }
+
+  void updateSelectedDate(DateTime date) {
+    selectedDate = date;
     notifyListeners();
   }
 }
