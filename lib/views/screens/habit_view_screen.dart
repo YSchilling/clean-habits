@@ -1,3 +1,4 @@
+import 'package:clean_habits/controllers/habit_list_controller.dart';
 import 'package:clean_habits/models/habit.dart';
 import 'package:clean_habits/controllers/habit_list_notifer.dart';
 import 'package:clean_habits/views/widgets/habit_editing_popup_menu.dart';
@@ -10,7 +11,7 @@ class HabitViewScreen extends StatelessWidget {
 
   void _resetProgress(HabitListNotifier notifier) {
     Habit habit = notifier.getSelectedHabit()!;
-    habit.progressValue = 0;
+    HabitListController.saveProgressForDay(habit, notifier.selectedDate, 0);
     notifier.updateSelectedHabit(habit);
   }
 
@@ -64,23 +65,29 @@ class HabitViewingForm extends StatelessWidget {
       builder: (context, notifier, child) => Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
-          child: SizedBox(
-            width: 256,
-            height: 256,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                CircularProgressIndicator(
+            child: SizedBox(
+          width: 256,
+          height: 256,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              CircularProgressIndicator(
                   backgroundColor: Colors.black12,
-                  value: habit.progressValue / habit.progressGoal,
-                ),
-                Center(
-                  child: Text(habit.progressValue.toString()),
-                )
-              ],
-            ),
+                  value: (HabitListController.getProgressForDay(
+                                  habit, notifier.selectedDate)
+                              ?.progress ??
+                          0) /
+                      habit.progressGoal),
+              Center(
+                child: Text((HabitListController.getProgressForDay(
+                                habit, notifier.selectedDate)
+                            ?.progress ??
+                        0)
+                    .toString()),
+              )
+            ],
           ),
-        ),
+        )),
       ),
     );
   }

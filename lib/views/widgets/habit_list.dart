@@ -15,6 +15,7 @@ class HabitList extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         List<Habit> habits = snapshot.data!;
+        debugPrint("Fetched habits: $habits");
         return ListView.builder(
           itemCount: habits.length,
           itemBuilder: (context, index) => Padding(

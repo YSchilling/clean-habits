@@ -1,3 +1,4 @@
+import 'package:clean_habits/controllers/habit_list_controller.dart';
 import 'package:clean_habits/models/habit.dart';
 import 'package:clean_habits/controllers/habit_list_notifer.dart';
 import 'package:clean_habits/views/screens/habit_view_screen.dart';
@@ -32,8 +33,11 @@ class HabitListItem extends StatelessWidget {
               ),
             ),
             LinearProgressIndicator(
-              value: habit.progressValue / habit.progressGoal,
-            ),
+                value: (HabitListController.getProgressForDay(
+                                habit, notifier.selectedDate)
+                            ?.progress ??
+                        0) /
+                    habit.progressGoal)
           ],
         );
       },

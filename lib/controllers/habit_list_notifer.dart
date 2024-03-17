@@ -26,12 +26,9 @@ class HabitListNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  String getSelectedDateString() {
-    return "${selectedDate.day}.${selectedDate.month}.${selectedDate.year}";
-  }
-
   void updateSelectedDate(DateTime date) {
     selectedDate = date;
+    debugPrint("New selected date: $date");
     notifyListeners();
   }
 }

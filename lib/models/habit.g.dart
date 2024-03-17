@@ -31,11 +31,6 @@ const HabitSchema = CollectionSchema(
       id: 2,
       name: r'progressUnit',
       type: IsarType.string,
-    ),
-    r'progressValue': PropertySchema(
-      id: 3,
-      name: r'progressValue',
-      type: IsarType.long,
     )
   },
   estimateSize: _habitEstimateSize,
@@ -44,7 +39,14 @@ const HabitSchema = CollectionSchema(
   deserializeProp: _habitDeserializeProp,
   idName: r'id',
   indexes: {},
-  links: {},
+  links: {
+    r'progressDays': LinkSchema(
+      id: -4452628225032709110,
+      name: r'progressDays',
+      target: r'DayProgress',
+      single: false,
+    )
+  },
   embeddedSchemas: {},
   getId: _habitGetId,
   getLinks: _habitGetLinks,
@@ -72,7 +74,6 @@ void _habitSerialize(
   writer.writeString(offsets[0], object.name);
   writer.writeLong(offsets[1], object.progressGoal);
   writer.writeString(offsets[2], object.progressUnit);
-  writer.writeLong(offsets[3], object.progressValue);
 }
 
 Habit _habitDeserialize(
@@ -85,7 +86,6 @@ Habit _habitDeserialize(
     name: reader.readString(offsets[0]),
     progressGoal: reader.readLong(offsets[1]),
     progressUnit: reader.readString(offsets[2]),
-    progressValue: reader.readLong(offsets[3]),
   );
   object.id = id;
   return object;
@@ -104,8 +104,6 @@ P _habitDeserializeProp<P>(
       return (reader.readLong(offset)) as P;
     case 2:
       return (reader.readString(offset)) as P;
-    case 3:
-      return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -116,11 +114,13 @@ Id _habitGetId(Habit object) {
 }
 
 List<IsarLinkBase<dynamic>> _habitGetLinks(Habit object) {
-  return [];
+  return [object.progressDays];
 }
 
 void _habitAttach(IsarCollection<dynamic> col, Id id, Habit object) {
   object.id = id;
+  object.progressDays
+      .attach(col, col.isar.collection<DayProgress>(), r'progressDays', id);
 }
 
 extension HabitQueryWhereSort on QueryBuilder<Habit, Habit, QWhere> {
@@ -561,64 +561,68 @@ extension HabitQueryFilter on QueryBuilder<Habit, Habit, QFilterCondition> {
       ));
     });
   }
+}
 
-  QueryBuilder<Habit, Habit, QAfterFilterCondition> progressValueEqualTo(
-      int value) {
+extension HabitQueryObject on QueryBuilder<Habit, Habit, QFilterCondition> {}
+
+extension HabitQueryLinks on QueryBuilder<Habit, Habit, QFilterCondition> {
+  QueryBuilder<Habit, Habit, QAfterFilterCondition> progressDays(
+      FilterQuery<DayProgress> q) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'progressValue',
-        value: value,
-      ));
+      return query.link(q, r'progressDays');
     });
   }
 
-  QueryBuilder<Habit, Habit, QAfterFilterCondition> progressValueGreaterThan(
-    int value, {
+  QueryBuilder<Habit, Habit, QAfterFilterCondition> progressDaysLengthEqualTo(
+      int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'progressDays', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<Habit, Habit, QAfterFilterCondition> progressDaysIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'progressDays', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<Habit, Habit, QAfterFilterCondition> progressDaysIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'progressDays', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<Habit, Habit, QAfterFilterCondition> progressDaysLengthLessThan(
+    int length, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'progressValue',
-        value: value,
-      ));
+      return query.linkLength(r'progressDays', 0, true, length, include);
     });
   }
 
-  QueryBuilder<Habit, Habit, QAfterFilterCondition> progressValueLessThan(
-    int value, {
+  QueryBuilder<Habit, Habit, QAfterFilterCondition>
+      progressDaysLengthGreaterThan(
+    int length, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'progressValue',
-        value: value,
-      ));
+      return query.linkLength(r'progressDays', length, include, 999999, true);
     });
   }
 
-  QueryBuilder<Habit, Habit, QAfterFilterCondition> progressValueBetween(
+  QueryBuilder<Habit, Habit, QAfterFilterCondition> progressDaysLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'progressValue',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.linkLength(
+          r'progressDays', lower, includeLower, upper, includeUpper);
     });
   }
 }
-
-extension HabitQueryObject on QueryBuilder<Habit, Habit, QFilterCondition> {}
-
-extension HabitQueryLinks on QueryBuilder<Habit, Habit, QFilterCondition> {}
 
 extension HabitQuerySortBy on QueryBuilder<Habit, Habit, QSortBy> {
   QueryBuilder<Habit, Habit, QAfterSortBy> sortByName() {
@@ -654,18 +658,6 @@ extension HabitQuerySortBy on QueryBuilder<Habit, Habit, QSortBy> {
   QueryBuilder<Habit, Habit, QAfterSortBy> sortByProgressUnitDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'progressUnit', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Habit, Habit, QAfterSortBy> sortByProgressValue() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'progressValue', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Habit, Habit, QAfterSortBy> sortByProgressValueDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'progressValue', Sort.desc);
     });
   }
 }
@@ -718,18 +710,6 @@ extension HabitQuerySortThenBy on QueryBuilder<Habit, Habit, QSortThenBy> {
       return query.addSortBy(r'progressUnit', Sort.desc);
     });
   }
-
-  QueryBuilder<Habit, Habit, QAfterSortBy> thenByProgressValue() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'progressValue', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Habit, Habit, QAfterSortBy> thenByProgressValueDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'progressValue', Sort.desc);
-    });
-  }
 }
 
 extension HabitQueryWhereDistinct on QueryBuilder<Habit, Habit, QDistinct> {
@@ -750,12 +730,6 @@ extension HabitQueryWhereDistinct on QueryBuilder<Habit, Habit, QDistinct> {
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'progressUnit', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<Habit, Habit, QDistinct> distinctByProgressValue() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'progressValue');
     });
   }
 }
@@ -784,10 +758,671 @@ extension HabitQueryProperty on QueryBuilder<Habit, Habit, QQueryProperty> {
       return query.addPropertyName(r'progressUnit');
     });
   }
+}
 
-  QueryBuilder<Habit, int, QQueryOperations> progressValueProperty() {
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+extension GetDayProgressCollection on Isar {
+  IsarCollection<DayProgress> get dayProgress => this.collection();
+}
+
+const DayProgressSchema = CollectionSchema(
+  name: r'DayProgress',
+  id: 4884404259899075107,
+  properties: {
+    r'day': PropertySchema(
+      id: 0,
+      name: r'day',
+      type: IsarType.long,
+    ),
+    r'month': PropertySchema(
+      id: 1,
+      name: r'month',
+      type: IsarType.long,
+    ),
+    r'progress': PropertySchema(
+      id: 2,
+      name: r'progress',
+      type: IsarType.long,
+    ),
+    r'year': PropertySchema(
+      id: 3,
+      name: r'year',
+      type: IsarType.long,
+    )
+  },
+  estimateSize: _dayProgressEstimateSize,
+  serialize: _dayProgressSerialize,
+  deserialize: _dayProgressDeserialize,
+  deserializeProp: _dayProgressDeserializeProp,
+  idName: r'id',
+  indexes: {},
+  links: {
+    r'habit': LinkSchema(
+      id: -3293774350877332532,
+      name: r'habit',
+      target: r'Habit',
+      single: true,
+      linkName: r'progressDays',
+    )
+  },
+  embeddedSchemas: {},
+  getId: _dayProgressGetId,
+  getLinks: _dayProgressGetLinks,
+  attach: _dayProgressAttach,
+  version: '3.1.0+1',
+);
+
+int _dayProgressEstimateSize(
+  DayProgress object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  return bytesCount;
+}
+
+void _dayProgressSerialize(
+  DayProgress object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeLong(offsets[0], object.day);
+  writer.writeLong(offsets[1], object.month);
+  writer.writeLong(offsets[2], object.progress);
+  writer.writeLong(offsets[3], object.year);
+}
+
+DayProgress _dayProgressDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = DayProgress(
+    day: reader.readLong(offsets[0]),
+    month: reader.readLong(offsets[1]),
+    progress: reader.readLong(offsets[2]),
+    year: reader.readLong(offsets[3]),
+  );
+  object.id = id;
+  return object;
+}
+
+P _dayProgressDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readLong(offset)) as P;
+    case 1:
+      return (reader.readLong(offset)) as P;
+    case 2:
+      return (reader.readLong(offset)) as P;
+    case 3:
+      return (reader.readLong(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+Id _dayProgressGetId(DayProgress object) {
+  return object.id;
+}
+
+List<IsarLinkBase<dynamic>> _dayProgressGetLinks(DayProgress object) {
+  return [object.habit];
+}
+
+void _dayProgressAttach(
+    IsarCollection<dynamic> col, Id id, DayProgress object) {
+  object.id = id;
+  object.habit.attach(col, col.isar.collection<Habit>(), r'habit', id);
+}
+
+extension DayProgressQueryWhereSort
+    on QueryBuilder<DayProgress, DayProgress, QWhere> {
+  QueryBuilder<DayProgress, DayProgress, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'progressValue');
+      return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+}
+
+extension DayProgressQueryWhere
+    on QueryBuilder<DayProgress, DayProgress, QWhereClause> {
+  QueryBuilder<DayProgress, DayProgress, QAfterWhereClause> idEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: id,
+        upper: id,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterWhereClause> idNotEqualTo(
+      Id id) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            )
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            )
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterWhereClause> idGreaterThan(Id id,
+      {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.greaterThan(lower: id, includeLower: include),
+      );
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterWhereClause> idLessThan(Id id,
+      {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.lessThan(upper: id, includeUpper: include),
+      );
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterWhereClause> idBetween(
+    Id lowerId,
+    Id upperId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: lowerId,
+        includeLower: includeLower,
+        upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension DayProgressQueryFilter
+    on QueryBuilder<DayProgress, DayProgress, QFilterCondition> {
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> dayEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'day',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> dayGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'day',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> dayLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'day',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> dayBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'day',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> idEqualTo(
+      Id value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> idGreaterThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> idLessThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> idBetween(
+    Id lower,
+    Id upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> monthEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'month',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition>
+      monthGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'month',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> monthLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'month',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> monthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'month',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> progressEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'progress',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition>
+      progressGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'progress',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition>
+      progressLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'progress',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> progressBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'progress',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> yearEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'year',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> yearGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'year',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> yearLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'year',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> yearBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'year',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension DayProgressQueryObject
+    on QueryBuilder<DayProgress, DayProgress, QFilterCondition> {}
+
+extension DayProgressQueryLinks
+    on QueryBuilder<DayProgress, DayProgress, QFilterCondition> {
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> habit(
+      FilterQuery<Habit> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'habit');
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterFilterCondition> habitIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'habit', 0, true, 0, true);
+    });
+  }
+}
+
+extension DayProgressQuerySortBy
+    on QueryBuilder<DayProgress, DayProgress, QSortBy> {
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> sortByDay() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'day', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> sortByDayDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'day', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> sortByMonth() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'month', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> sortByMonthDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'month', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> sortByProgress() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> sortByProgressDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> sortByYear() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'year', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> sortByYearDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'year', Sort.desc);
+    });
+  }
+}
+
+extension DayProgressQuerySortThenBy
+    on QueryBuilder<DayProgress, DayProgress, QSortThenBy> {
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> thenByDay() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'day', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> thenByDayDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'day', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> thenById() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> thenByIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> thenByMonth() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'month', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> thenByMonthDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'month', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> thenByProgress() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> thenByProgressDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> thenByYear() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'year', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QAfterSortBy> thenByYearDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'year', Sort.desc);
+    });
+  }
+}
+
+extension DayProgressQueryWhereDistinct
+    on QueryBuilder<DayProgress, DayProgress, QDistinct> {
+  QueryBuilder<DayProgress, DayProgress, QDistinct> distinctByDay() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'day');
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QDistinct> distinctByMonth() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'month');
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QDistinct> distinctByProgress() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'progress');
+    });
+  }
+
+  QueryBuilder<DayProgress, DayProgress, QDistinct> distinctByYear() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'year');
+    });
+  }
+}
+
+extension DayProgressQueryProperty
+    on QueryBuilder<DayProgress, DayProgress, QQueryProperty> {
+  QueryBuilder<DayProgress, int, QQueryOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<DayProgress, int, QQueryOperations> dayProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'day');
+    });
+  }
+
+  QueryBuilder<DayProgress, int, QQueryOperations> monthProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'month');
+    });
+  }
+
+  QueryBuilder<DayProgress, int, QQueryOperations> progressProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'progress');
+    });
+  }
+
+  QueryBuilder<DayProgress, int, QQueryOperations> yearProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'year');
     });
   }
 }

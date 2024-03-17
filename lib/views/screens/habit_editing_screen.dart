@@ -40,9 +40,8 @@ class HabitEditingForm extends StatelessWidget {
             Habit updatedHabit = notifier.getSelectedHabit()!;
             updatedHabit.name = _nameController.text;
             updatedHabit.progressUnit = _progressUnitController.text;
-            updatedHabit.progressValue = 0;
             updatedHabit.progressGoal = int.parse(_progressGoalController.text);
-
+            updatedHabit.progressDays.clear();
             notifier.updateSelectedHabit(updatedHabit);
             Navigator.pop(context);
           }

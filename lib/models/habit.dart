@@ -8,11 +8,29 @@ class Habit {
   String name;
   String progressUnit;
   int progressGoal;
-  int progressValue;
+  final progressDays = IsarLinks<DayProgress>();
 
   Habit(
       {required this.name,
       required this.progressUnit,
-      required this.progressGoal,
-      required this.progressValue});
+      required this.progressGoal});
+}
+
+@collection
+class DayProgress {
+  Id id = Isar.autoIncrement;
+  int year;
+  int month;
+  int day;
+  int progress;
+
+  @Backlink(to: "progressDays")
+  final habit = IsarLink<Habit>();
+
+  DayProgress({
+    required this.year,
+    required this.month,
+    required this.day,
+    required this.progress,
+  });
 }

@@ -4,19 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class WeekProgressBar extends StatelessWidget {
-  const WeekProgressBar({super.key});
+  WeekProgressBar({super.key});
+
+  final weekDates = getWeekDays(DateTime.now());
 
   @override
   Widget build(BuildContext context) {
     return Consumer<HabitListNotifier>(
-      builder: (context, notifier, child) => SizedBox(
-        height: 64,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(
-            7,
-            (index) => Day(notifier: notifier, weekday: index),
-          ),
+      builder: (context, notifier, child) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: List.generate(
+          7,
+          (index) => Day(notifier: notifier, date: weekDates[index]),
         ),
       ),
     );
@@ -24,9 +23,9 @@ class WeekProgressBar extends StatelessWidget {
 }
 
 class Day extends StatelessWidget {
-  const Day({super.key, required this.weekday, required this.notifier});
+  const Day({super.key, required this.date, required this.notifier});
 
-  final int weekday;
+  final DateTime date;
   final HabitListNotifier notifier;
 
   String? weekdayToString(int weekday) {
@@ -41,25 +40,47 @@ class Day extends StatelessWidget {
     }[weekday];
   }
 
-  DateTime weekdayToDate(int weekday) {
-    return getWeekDays(DateTime.now())[weekday];
+  bool isToday() {
+    DateTime today = DateTime.now();
+    return date.year == today.year &&
+        date.month == today.month &&
+        date.day == today.day;
   }
 
-  void updateDate() {
-    DateTime date = getWeekDays(DateTime.now())[weekday];
-    notifier.updateSelectedDate(date);
+  bool isSelected() {
+    DateTime selected = notifier.selectedDate;
+    return date.year == selected.year &&
+        date.month == selected.month &&
+        date.day == selected.day;
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => updateDate(),
-      child: Column(
-        children: [
-          Text(weekdayToString(weekday) ?? "ERR"),
-          const SizedBox(height: 8.0),
-          const CircularProgressIndicator(value: 1.0),
-        ],
+      onTap: () => notifier.updateSelectedDate(date),
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        decoration: isSelected()
+            ? BoxDecoration(
+                color: Theme.of(context).focusColor,
+                borderRadius: const BorderRadius.all(Radius.circular(8.0)))
+            : null,
+        child: Column(
+          children: [
+            Text(weekdayToString(date.weekday - 1) ?? "ERR",
+                style: isToday()
+                    ? TextStyle(color: Theme.of(context).primaryColor)
+                    : null),
+            const SizedBox(height: 8.0),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                const CircularProgressIndicator(value: 1.0),
+                Text(date.day.toString())
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

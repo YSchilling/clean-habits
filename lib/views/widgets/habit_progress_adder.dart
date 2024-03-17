@@ -1,3 +1,4 @@
+import 'package:clean_habits/controllers/habit_list_controller.dart';
 import 'package:clean_habits/models/habit.dart';
 import 'package:clean_habits/controllers/habit_list_notifer.dart';
 import 'package:flutter/material.dart';
@@ -33,10 +34,17 @@ Future<void> showProgressAdderDialogue(BuildContext context) {
                 onPressed: () {
                   if (formKey.currentState!.validate()) {
                     Habit habit = notifier.getSelectedHabit()!;
-                    habit.progressValue += int.parse(progressController.text);
+                    int oldProgress = (HabitListController.getProgressForDay(
+                                habit, notifier.selectedDate)
+                            ?.progress ??
+                        0);
+                    HabitListController.saveProgressForDay(
+                        habit,
+                        notifier.selectedDate,
+                        oldProgress + int.parse(progressController.text));
                     notifier.updateSelectedHabit(habit);
+                    Navigator.pop(context);
                   }
-                  Navigator.pop(context);
                 },
                 child: const Text('Add'),
               )
